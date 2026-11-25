@@ -1,0 +1,1 @@
+{"description":"Live dashboard of Taskmarket market data (Tempo + Base). Built for bounty TSK-BRK611AN.","license":"MIT","name":"taskmarket-visualizer","private":true,"scripts":{"build":"node scripts/build.mjs","deploy":"node scripts/deploy.mjs","fetch":"node scripts/fetch-data.mjs","serve":"python3 -m http.server 8000"},"type":"module","version":"1.0.0"}
