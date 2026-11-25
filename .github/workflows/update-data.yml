@@ -1,9 +1,9 @@
 name: update-data
 
-# Hourly server-side data refresh + GitHub Pages deploy.
-# The workflow fetches the Taskmarket API, commits fresh data/*.json, builds
-# dist/ and publishes it with the official deploy-pages action (which also
-# enables/configures Pages for this repo — no manual Pages setup needed).
+# Hourly server-side data refresh.
+# Fetches the Taskmarket API and commits fresh data/*.json. The commit itself
+# triggers the standard GitHub Pages branch deploy, so this workflow does NOT
+# deploy Pages itself (deploying from both places at once collided and failed).
 on:
   push:
     branches: [main]
@@ -13,19 +13,10 @@ on:
 
 permissions:
   contents: write
-  pages: write
-  id-token: write
-
-concurrency:
-  group: pages
-  cancel-in-progress: false
 
 jobs:
-  build-and-deploy:
+  refresh-data:
     runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -40,12 +31,3 @@ jobs:
           git add data/
           git diff --cached --quiet || git commit -m "data: refresh $(date -u +%Y-%m-%dT%H:%M:%SZ)"
           git push || true
-      - name: Build site
-        run: node scripts/build.mjs
-      - uses: actions/configure-pages@v5
-      - uses: actions/upload-pages-artifact@v3
-        with:
-          path: dist
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v4
